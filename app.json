@@ -33,9 +33,23 @@
           "resizeMode": "contain",
           "backgroundColor": "#000000",
           "dark": {
-            "image": "./assets/splash.png",
+            "image": "./assets/images/splash.png",
             "backgroundColor": "#000000"
           }
+        }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/SpaceMono-Regular.ttf",
+            "./assets/fonts/oswald/Oswald-Bold.ttf",
+            "./assets/fonts/oswald/Oswald-ExtraLight.ttf",
+            "./assets/fonts/oswald/Oswald-Light.ttf",
+            "./assets/fonts/oswald/OswaldMedium.ttf",
+            "./assets/fonts/oswald/Oswald-Regular.ttf",
+            "./assets/fonts/oswald/OswaldSemiBold.ttf"
+          ]
         }
       ]
     ],
