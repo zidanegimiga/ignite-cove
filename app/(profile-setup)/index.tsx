@@ -17,7 +17,7 @@ const ProfileSetup = () => {
       <View>
         <Text>Profile Setup First Screen</Text>
 
-        <Link href="/">Navigate home</Link>
+        <Link href="/(screen-home)">Navigate home</Link>
       </View>
     </SafeAreaView>
   );

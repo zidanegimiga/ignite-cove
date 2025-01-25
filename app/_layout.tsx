@@ -42,7 +42,7 @@ export default function RootLayout() {
             name="(profile-setup)"
             options={{ headerShown: false }}
           />
-          <Stack.Screen name="(home-screen)" options={{ headerShown: false }} />
+          <Stack.Screen name="(screen-home)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
         </Stack>
         <StatusBar style="auto" />
