@@ -10,7 +10,7 @@ export default function OnboardingLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
-        <Stack.Screen name="setup" options={{ headerShown: false }} />
+        <Stack.Screen name="profile-setup" options={{ headerShown: false }} />
         <Stack.Screen name="index" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="auto" />
