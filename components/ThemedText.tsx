@@ -1,5 +1,4 @@
 import { Text, type TextProps, StyleSheet } from 'react-native';
-
 import { useThemeColor } from '@/hooks/useThemeColor';
 
 export type ThemedTextProps = TextProps & {
@@ -32,6 +31,15 @@ export function ThemedText({
     />
   );
 }
+
+// Check this example of usage:
+{/* <ThemedText type="defaultSemiBold">
+  {Platform.select({
+    ios: "cmd + d",
+    android: "cmd + m",
+    web: "F12",
+  })}
+</ThemedText>; */}
 
 const styles = StyleSheet.create({
   default: {
