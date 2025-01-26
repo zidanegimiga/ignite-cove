@@ -22,6 +22,12 @@ First things first, checkout from the main Development branch, create your dev b
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
 ------------------------------------------------------------------------------------------------------------
+## Tools & Guidelines
+
+1. To convert normal SVG to expo-friendly React components. Visit: [react-svgr](https://react-svgr.com/playground/?native=true&typescript=true)
+2. Try to have all the component files within the same feature be as close as they possibly can. Adopt a feature-based folder structure where shared features have their own dedicated place, same applies to unique ones.
+3. On Android, when adding new libraries, strictly use Expo guidelines to avoid manual linking. You might notice that new libraries are not immediately reflecting. You have to create a new development build each time. 
+4. Use Prettier for linting.
 
 
 ## Learn more
