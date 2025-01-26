@@ -1,17 +1,17 @@
 import { StyleSheet, Text, View, SafeAreaView } from "react-native";
 import React from "react";
-import ChevronLeft from "@/components/shared/Icons/ChevronLeft";
+import Chevron from "@/components/shared/Icons/ChevronLeft";
 import { ThemedText } from "@/components/ThemedText";
 import { useFonts } from "expo-font";
 
-export default function PaymentScreenHeader({title}: {title: string}) {
+export default function PaymentScreenHeader({title}: {title: string | undefined}) {
   const [loaded, error] = useFonts({
     "Oswald-Regular": require("../../../assets/fonts/oswald/Oswald-Regular.ttf"),
   });
 
   return (
     <View style={styles.header}>
-      <ChevronLeft />
+      <Chevron />
       <ThemedText
         type="defaultSemiBold"
         style={{ fontFamily: "Oswald-Regular" }}

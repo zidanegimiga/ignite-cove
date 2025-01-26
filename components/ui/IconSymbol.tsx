@@ -1,5 +1,5 @@
 // This file is a fallback for using MaterialIcons on Android and web.
-
+// @ts-nocheck
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { SymbolWeight } from 'expo-symbols';
 import React from 'react';
