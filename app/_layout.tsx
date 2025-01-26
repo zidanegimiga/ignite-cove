@@ -19,8 +19,12 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const queryClient = new QueryClient();
   const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+  const [loaded, error] = useFonts({
+    'Oswald-Bold': require('../assets/fonts/oswald/Oswald-Bold.ttf'),
+    'Oswald-Regular': require('../assets/fonts/oswald/Oswald-Regular.ttf'),
+    'Oswald-SemiBold': require('../assets/fonts/oswald/Oswald-SemiBold.ttf'),
+    'Oswald-Medium': require('../assets/fonts/oswald/Oswald-Medium.ttf'),
+    // 'Oswald-Medium': require('./assets/fonts/oswald/Oswald-Medium.ttf'),
   });
 
   useEffect(() => {
@@ -37,6 +41,7 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
           <Stack.Screen
             name="(profile-setup)"
