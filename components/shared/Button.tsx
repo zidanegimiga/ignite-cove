@@ -30,7 +30,7 @@ const Button: React.FC<ButtonProps> = ({
   textStyle,
 }) => {
   const [loaded, error] = useFonts({
-    "Oswald-Regular": require("@/assets/fonts/oswald/Oswald-Regular.ttf"),
+    "Oswald-Regular": require("../../assets/fonts/oswald/Oswald-Regular.ttf"),
   });
   return (
     <TouchableOpacity
@@ -70,6 +70,5 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 16,
-    fontWeight: "bold",
   },
 });
