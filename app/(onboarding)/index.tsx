@@ -17,7 +17,7 @@ const OnboardingHome = () => {
   }
 
   function handlePress() {
-    navigation.navigate('(onboarding)/payment')
+    navigation.navigate('payment')
   }
   return (
     <SafeAreaView style={styles.mainView}>
@@ -33,7 +33,7 @@ const OnboardingHome = () => {
             fontFamily: "Oswald-Bold",
           }}
         >
-          Ignite
+          Ignitecove
         </Text>
       </View>
 
