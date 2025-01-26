@@ -29,6 +29,9 @@ You can start developing by editing the files inside the **app** directory. This
 3. On Android, when adding new libraries, strictly use Expo guidelines to avoid manual linking. You might notice that new libraries are not immediately reflecting. You have to create a new development build each time. 
 4. Use Prettier for linting.
 
+## API:
+[Swagger](https://sandbox.ignitecove.com/swagger-ui/index.html#/account-resource/createAccount)
+
 
 ## Learn more
 
