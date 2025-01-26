@@ -9,7 +9,7 @@ import {
 import { useFonts } from "expo-font";
 import { useEffect, useState, useRef } from "react";
 import { red } from "react-native-reanimated/lib/typescript/Colors";
-// import { Step1SVG, Step2SVG } from "./SvgComponents";
+import { Step1SVG, Step2SVG } from "./SvgComponents";
 export { Image } from "expo-image";
 const { width } = Dimensions.get("window");
 
@@ -50,11 +50,11 @@ export default function OnboardingCard() {
   const config = [
     {
       text: "Where Sparks Fly & Connections Ignite!",
-      // svgBackground: () => <Step1SVG />
+      svgBackground: () => <Step1SVG />
     },
     {
       text: "Skip Small Talk, Let's Go On Dates",
-      // svgBackground: () => <Step2SVG />
+      svgBackground: () => <Step2SVG />
     },
   ];
 
@@ -119,7 +119,7 @@ export default function OnboardingCard() {
         </Animated.View>
       </View>
 
-      {/* <View style={styles.svgContainer}>{currentStep.svgBackground()}</View> */}
+      <View style={styles.svgContainer}>{currentStep.svgBackground()}</View>
 
       <Indicator steps={config.length} activeStep={step} />
     </View>
@@ -129,7 +129,7 @@ export default function OnboardingCard() {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    height: 500,
+    height: 540,
     backgroundColor: "#FFC6C8",
     borderRadius: 24,
     padding: 32,
@@ -138,6 +138,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "flex-start",
+    overflow: "hidden"
   },
   text: {
     fontSize: 56,
@@ -158,8 +159,8 @@ const styles = StyleSheet.create({
   },
   svgContainer: {
     position: "absolute",
-    bottom: -30,
-    right: -30,
+    bottom: -5,
+    right: -15,
   },
   indicatorContainer: {
     flexDirection: "row",
