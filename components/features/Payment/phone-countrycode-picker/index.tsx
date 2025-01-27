@@ -77,6 +77,14 @@ interface CountryCodeProps {
    * Search Dropdown Text Styles
    */
   dropdownTextStyles?: TextStyle;
+  /**
+   * Labels and placeholders
+   */
+  labels?: {
+    code: "Code",
+    phone: "Phone Number",
+    placeholder: "Enter Phone Number"
+  };
 }
 
 const CountryCodeDropdownPicker: React.FC<CountryCodeProps> = ({
@@ -94,6 +102,7 @@ const CountryCodeDropdownPicker: React.FC<CountryCodeProps> = ({
   searchTextStyles = {},
   dropdownStyles = {},
   dropdownTextStyles = {},
+  labels
 }) => {
   const [loaded, error] = useFonts({
     "Oswald-Regular": require("../../../../assets/fonts/oswald/Oswald-Regular.ttf"),
@@ -154,7 +163,7 @@ const CountryCodeDropdownPicker: React.FC<CountryCodeProps> = ({
                 marginBottom: 6,
               }}
             >
-              Code
+              {labels?.code}
             </Text>
             <TouchableOpacity
               style={{ flexDirection: "row" }}
@@ -198,7 +207,7 @@ const CountryCodeDropdownPicker: React.FC<CountryCodeProps> = ({
                   marginBottom: 6,
                 }}
               >
-                Phone
+                {labels?.phone}
               </Text>
               <TextInput
                 style={[
@@ -214,7 +223,7 @@ const CountryCodeDropdownPicker: React.FC<CountryCodeProps> = ({
                   },
                   phoneStyles,
                 ]}
-                placeholder={"Enter Mobile Number"}
+                placeholder={labels?.placeholder}
                 keyboardType={"phone-pad"}
                 placeholderTextColor={"#dddddd"}
                 onChangeText={setPhone}
