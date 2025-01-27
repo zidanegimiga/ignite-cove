@@ -6,15 +6,23 @@ import React from "react";
 import CountryCodeDropdownPicker from "../features/Payment/phone-countrycode-picker";
 
 type CountryCodePickerProps = {
-  onCountryChange: (country: string) => void;
+  onCountryChange: (country: CountryPayload) => void;
   onPhoneChange: (phone: string) => void;
+  labels: {
+    code?: string,
+    phone?: string,
+    placeholder?: string
+  }
 };
+
+type CountryPayload = {name: string, dial_code: string, code: string, flag: string}
 
 const CountryCodePicker: React.FC<CountryCodePickerProps> = ({
   onCountryChange,
   onPhoneChange,
+  labels
 }) => {
-  const [selected, setSelected] = React.useState("+254");
+  const [selected, setSelected] = React.useState("");
   const [country, setCountry] = React.useState("");
   const [phone, setPhone] = React.useState("");
 
@@ -30,7 +38,7 @@ const CountryCodePicker: React.FC<CountryCodePickerProps> = ({
     <CountryCodeDropdownPicker
       selected={selected}
       setSelected={setSelected}
-      setCountryDetails={(value: string) => {
+      setCountryDetails={(value: CountryPayload) => {
         setCountry(value);
         onCountryChange(value);
       }}
@@ -42,6 +50,7 @@ const CountryCodePicker: React.FC<CountryCodePickerProps> = ({
       countryCodeContainerStyles={{ paddingVertical: 5 }}
       countryCodeTextStyles={{ fontSize: 11 }}
       phoneStyles={{ width: "100%" }}
+      labels={labels}
     />
   );
 };
