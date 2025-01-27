@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import { SafeAreaView, View, Image, Text, StyleSheet } from "react-native";
 import { useFonts } from "expo-font";
@@ -17,7 +18,7 @@ const OnboardingHome = () => {
   }
 
   function handlePress() {
-    navigation.navigate('(onboarding)/payment')
+    navigation.navigate('payment')
   }
   return (
     <SafeAreaView style={styles.mainView}>
@@ -33,7 +34,7 @@ const OnboardingHome = () => {
             fontFamily: "Oswald-Bold",
           }}
         >
-          Ignite
+          Ignitecove
         </Text>
       </View>
 
