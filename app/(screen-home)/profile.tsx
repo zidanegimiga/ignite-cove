@@ -7,24 +7,35 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFonts } from 'expo-font';
+import { ScreenContainer } from 'react-native-screens';
+import ProfileHeader from '@/components/features/Profile/ProfileHeader';
 
 export default function Profile() {
+  const [loaded, error] = useFonts({
+    'Oswald-Bold': require("@/assets/fonts/oswald/Oswald-Bold.ttf"),
+    'Oswald-Regular': require("@/assets/fonts/oswald/Oswald-Regular.ttf"),
+  })
   return (
-    <SafeAreaView>
-        <ThemedText>Profile Page</ThemedText>
+    <SafeAreaView style={styles.screenContainer}>
+        <ThemedText style={styles.title}>Profile</ThemedText>
+        <ProfileHeader name='Mary' age='31' image_url=''/>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  screenContainer: {
+    paddingTop: 16,
+    paddingHorizontal: 24,
   },
   titleContainer: {
     flexDirection: 'row',
     gap: 8,
   },
+  title: {
+    fontFamily: 'Oswald-Regular',
+    fontSize: 16,
+    marginBottom: 16
+  }
 });
