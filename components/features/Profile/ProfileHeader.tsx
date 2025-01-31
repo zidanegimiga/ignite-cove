@@ -17,7 +17,7 @@ interface ProfileHeaderProps {
 const ProfileHeader = ({ name, age, image_url }: ProfileHeaderProps) => {
   return (
     <View style={styles.container}>
-      <ProfileAvatar photoUrl="https://placebeard.it/250/250" completion={100} />
+      <ProfileAvatar photoUrl="https://placebeard.it/250/250" completion={67} />
       <View style={styles.profileDescContainer}>
         <ThemedText style={styles.nameAndAge}>
           {name}, {age}
@@ -40,6 +40,8 @@ const styles = StyleSheet.create({
     paddingLeft: 32,
     paddingBottom: 16,
     marginTop: 16,
+    width: "100%",
+    
   },
   profileDescContainer: {
     flexDirection: "column",
