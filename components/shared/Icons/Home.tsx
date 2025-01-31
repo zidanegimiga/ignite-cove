@@ -1,6 +1,12 @@
+// @ts-nocheck
 import * as React from "react";
 import Svg, { SvgProps, Path } from "react-native-svg";
-const HomeIcon = (props: SvgProps) => (
+
+interface Props extends SvgProps {
+  active?: boolean
+}
+
+const HomeIcon = (props: Props) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
     width={24}
@@ -9,14 +15,14 @@ const HomeIcon = (props: SvgProps) => (
     {...props}
   >
     <Path
-      stroke="#EB1E25"
+      stroke={props.active ? "#EB1E25" : "#484646"}
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}
       d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"
     />
     <Path
-      stroke="#EB1E25"
+      stroke={props.active ? "#EB1E25" : "#484646"}
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}

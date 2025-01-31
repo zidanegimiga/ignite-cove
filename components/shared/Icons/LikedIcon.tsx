@@ -1,6 +1,12 @@
+// @ts-nocheck
 import * as React from "react"
 import Svg, { SvgProps, Path } from "react-native-svg"
-const SvgComponent = (props: SvgProps) => (
+
+interface Props extends SvgProps {
+  active?: boolean
+}
+
+const LikedIcon = (props: Props) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
     width={24}
@@ -9,7 +15,7 @@ const SvgComponent = (props: SvgProps) => (
     {...props}
   >
     <Path
-      stroke="#484646"
+      stroke={props.active ? "#EB1E25" : "#484646"}
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}
@@ -17,4 +23,4 @@ const SvgComponent = (props: SvgProps) => (
     />
   </Svg>
 )
-export default SvgComponent
+export default LikedIcon

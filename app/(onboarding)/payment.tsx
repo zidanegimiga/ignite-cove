@@ -16,12 +16,17 @@ import { useNavigation } from "expo-router";
 const PaymentScreen = () => {
   const [paymentStep, setPaymentStep] = useState("enter_number");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [country, setCountry] = useState({"name":"Kenya","dial_code":"+254","code":"KE","flag":"🇰🇪"});
+  const [country, setCountry] = useState({
+    name: "Kenya",
+    dial_code: "+254",
+    code: "KE",
+    flag: "🇰🇪",
+  });
   const [otp, setOTP] = useState("");
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [isOtpVerified, setIsOtpVerified] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState('')
-  const [paymentMethod, setPaymentMethod] = useState('')
+  const [selectedPlan, setSelectedPlan] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("");
   const [seconds, setSeconds] = useState(5);
   const [isCounting, setIsCounting] = useState(false);
 
@@ -47,7 +52,7 @@ const PaymentScreen = () => {
 
   const handleCodeComplete = (code: string) => {
     setOTP(code);
-    console.log("Entered Code: ", otp)
+    console.log("Entered Code: ", otp);
   };
 
   function getCurrentStepText({
@@ -155,7 +160,7 @@ const PaymentScreen = () => {
   }
 
   function getOTP() {
-    startCountdown()
+    startCountdown();
     return {
       success: true,
       data: [],
@@ -188,7 +193,15 @@ const PaymentScreen = () => {
       case "payment_method_selection":
         if (paymentMethod) {
           handleForward();
-          navigation.navigate('(profile-setup)')
+          navigation.navigate("(profile-setup)");
+        }
+        break;
+      case "payment_processing":
+        navigation.navigate("(profile-setup)");
+        if (paymentMethod) {
+          handleForward();
+          navigation.navigate("(profile-setup)");
+          // navigation.navigate('profile')
         }
         break;
       default:
@@ -237,9 +250,19 @@ const PaymentScreen = () => {
           getCurrentStepText({ paymentStep, phone_number: phoneNumber })
             ?.secondary
         }
-        {paymentStep === "otp_verification"
-          ? " " + country.dial_code + " " + phoneNumber
-          : ""}
+        <ThemedText
+          style={{
+            fontFamily: "Oswald-Bold",
+            fontSize: 14,
+            lineHeight: 24,
+            marginTop: 4,
+            color: "#484646",
+          }}
+        >
+          {paymentStep === "otp_verification"
+            ? " " + country.dial_code + " " + phoneNumber
+            : ""}
+        </ThemedText>
       </ThemedText>
 
       {paymentStep === "enter_number" && (
@@ -250,7 +273,7 @@ const PaymentScreen = () => {
             labels={{
               code: "Code",
               phone: "Phone Number",
-              placeholder: "Enter phone number"
+              placeholder: "Enter phone number",
             }}
           />
         </View>
@@ -288,7 +311,7 @@ const PaymentScreen = () => {
                   marginBottom: 24,
                 }}
               >
-                Didn't get code? {seconds <= 1 ? "Resend in" : ""}{" "}
+                {seconds <= 1 ? "Didn't get code? " : "Resend in "}
                 {seconds <= 1 ? (
                   <Pressable onPress={getOTP}>
                     <Text
@@ -326,11 +349,13 @@ const PaymentScreen = () => {
         </>
       )}
 
-      { paymentStep === "plan_selection" && (
-          <PlanSelection handleForward={handleForward}/>
+      {paymentStep === "plan_selection" && (
+        <PlanSelection handleForward={handleForward} />
       )}
 
-      {paymentStep === "payment_method_selection" && <PaymentMethodSelection initiatePayment={handleForward} />}
+      {paymentStep === "payment_method_selection" && (
+        <PaymentMethodSelection initiatePayment={handleForward} />
+      )}
 
       {paymentStep === "payment_processing" && <PaymentLoader />}
 
@@ -353,7 +378,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     paddingTop: 48,
-    backgroundColor: "#F6F6F6"
+    backgroundColor: "#F6F6F6",
   },
   header: {
     fontSize: 16,
