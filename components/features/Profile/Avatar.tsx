@@ -23,7 +23,7 @@ const AnimatedCircle = Animated.createAnimatedComponent(Circle);
  */
 const ProfileAvatar = ({ photoUrl, completion }: ProfileAvatar) => {
   const size = 72;
-  const strokeWidth = 8;
+  const strokeWidth = 6;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
 
@@ -60,7 +60,7 @@ const ProfileAvatar = ({ photoUrl, completion }: ProfileAvatar) => {
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="#FF5733"
+          stroke="#F36827"
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
           animatedProps={animatedProps}
