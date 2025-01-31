@@ -4,7 +4,7 @@ import { SafeAreaView, View, Image, Text, StyleSheet } from "react-native";
 import { useFonts } from "expo-font";
 import OnboardingCard from "@/components/features/Onboarding/Card";
 import Button from "@/components/shared/Button";
-import { useNavigation } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 
 const OnboardingHome = () => {
   const [loaded, error] = useFonts({
@@ -12,6 +12,7 @@ const OnboardingHome = () => {
   });
 
   const navigation = useNavigation()
+  const router = useRouter()
 
   if (!loaded || error) {
     return null;
@@ -40,6 +41,7 @@ const OnboardingHome = () => {
 
       <OnboardingCard />
       <Button title="Get Started" onPress={handlePress}/>
+      {/* <Button title="Get Started" onPress={router.replace('/profile')}/> */}
 
 
 
