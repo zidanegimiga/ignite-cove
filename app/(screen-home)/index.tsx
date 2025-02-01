@@ -6,14 +6,12 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
+import Header from "@/components/features/Home/Header";
 
 export default function HomeScreen() {
   return (
-    <SafeAreaView>
-      <ThemedView>
-        <ThemedText>Home Page</ThemedText>
-        <Link href="/(onboarding)">Onboarding</Link>
-      </ThemedView>
+    <SafeAreaView style={{backgroundColor: "white", flex: 1, padding: 16}}>
+      <Header/>
     </SafeAreaView>
   );
 }
