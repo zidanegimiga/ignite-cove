@@ -1,11 +1,6 @@
-import { Image, StyleSheet, Platform, ScrollView } from "react-native";
+import { StyleSheet, ScrollView } from "react-native";
 
-import { HelloWave } from "@/components/HelloWave";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
 import { SafeAreaThemedView, ThemedView } from "@/components/ThemedView";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Link } from "expo-router";
 import Header from "@/components/features/Home/Header";
 import ProfileCard from "@/components/features/Home/ProfileCard";
 import ProfileInfo from "@/components/features/Home/ProfileInfo";
