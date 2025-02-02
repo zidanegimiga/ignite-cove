@@ -106,9 +106,9 @@ export default function Profile() {
         <PhotoAlbumCard
           title="Photo Album"
           initialPhotos={[
-            "https://placekitten.com/200/200",
-            "https://placekitten.com/201/201",
-            "https://placekitten.com/202/202"
+            "https://placebeard.it/250/250",
+            "https://placebeard.it/250/250",
+            "https://placebeard.it/250/250"
           ]}
         />
       )
@@ -123,7 +123,7 @@ export default function Profile() {
       >
         <ThemedText style={{fontFamily: 'Oswald-Regular', marginLeft: 16, marginVertical: 16}}>Profile</ThemedText>
         <View style={{padding: 16}}>
-        <ProfileHeader name="Mary" age="31" image_url="" />
+        <ProfileHeader name="Paul" age="35" image_url="" />
         </View>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <FlatList
