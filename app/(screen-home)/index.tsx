@@ -7,6 +7,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
 
+
 export default function HomeScreen() {
   return (
     <SafeAreaView>
