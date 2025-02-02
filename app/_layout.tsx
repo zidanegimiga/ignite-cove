@@ -4,7 +4,6 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { useRouter } from "expo-router";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -14,7 +13,6 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -25,7 +23,6 @@ export default function RootLayout() {
     'Oswald-Regular': require('../assets/fonts/oswald/Oswald-Regular.ttf'),
     'Oswald-SemiBold': require('../assets/fonts/oswald/Oswald-SemiBold.ttf'),
     'Oswald-Medium': require('../assets/fonts/oswald/Oswald-Medium.ttf'),
-    // 'Oswald-Medium': require('./assets/fonts/oswald/Oswald-Medium.ttf'),
   });
 
   useEffect(() => {
