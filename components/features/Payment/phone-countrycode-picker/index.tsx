@@ -241,7 +241,7 @@ const CountryCodeDropdownPicker: React.FC<CountryCodeProps> = ({
           <View style={[styles.row, { width: "90%" }]}>
             <Image
               source={_static.search}
-              resizeMode={"contain"}
+              contentFit={"contain"}
               style={[styles.icon, { width: 15, height: 15, marginLeft: 10 }]}
             />
             <TextInput

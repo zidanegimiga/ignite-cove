@@ -4,42 +4,50 @@ import { Image } from "expo-image";
 import React, { useEffect } from "react";
 import { useFonts } from "expo-font";
 import { blurhash } from "@/constants";
-import { useNavigation } from "expo-router"
+import { useNavigation, useRouter } from "expo-router";
 
 const CustomSplash = () => {
   const [loaded, error] = useFonts({
     'Oswald-Regular': require('../assets/fonts/oswald/Oswald-Regular.ttf'),
     'Oswald-Bold': require('../assets/fonts/oswald/Oswald-Bold.ttf'),
   });
-  const navigation = useNavigation()
+  const navigation = useNavigation();
+  const router = useRouter()
 
   useEffect(() => {
-    setTimeout(()=> {
-      console.log("I was here")
-      navigation.navigate('(onboarding)')
-    }, 3000)
-  }, [])
-  
+    if (loaded) {
+      console.log("Fonts have loaded, navigating to onboarding...");
+      setTimeout(() => {
+        router.replace("(onboarding)");
+      }, 100);
+    }
+  }, [loaded]);
+
+  useEffect(() => {
+    if (error) {
+      console.log("Error loading fonts:", error);
+    }
+  }, [error]);
 
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-      <Image
-        style={styles.image}
-        source={require("../assets/images/splash.png")}
-        placeholder={{ blurhash }}
-        // transition={1000}
-      />
-      <View>
-        <Text style={{ fontFamily: 'Oswald-Bold', fontSize: 20, marginBottom: 4, marginTop: 16, color: "#FA623B", textAlign: "center" }}>Ignitecove</Text>
-        <Text style={{ fontFamily: 'Oswald-Regular', fontSize: 18 }}>The ultimate dating app.</Text>
-      </View>
+        <Image
+          style={styles.image}
+          source={require("../assets/images/splash.png")}
+          placeholder={{ blurhash }}
+        />
+        <View>
+          <Text style={{ fontFamily: 'Oswald-Bold', fontSize: 20, marginBottom: 4, marginTop: 16, color: "#FA623B", textAlign: "center" }}>Ignitecove</Text>
+          <Text style={{ fontFamily: 'Oswald-Regular', fontSize: 18 }}>The ultimate dating app.</Text>
+        </View>
       </View>
     </View>
   );
 };
 
 export default CustomSplash;
+
 
 const styles = StyleSheet.create({
   container: {
@@ -52,7 +60,7 @@ const styles = StyleSheet.create({
   image: {
     height: 200,
     width: 200,
-    resizeMode: "contain"
+    contentFit: "contain"
   },
   imageContainer: {
     display: 'flex',
