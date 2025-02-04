@@ -40,8 +40,8 @@ const OnboardingHome = () => {
       </View>
 
       <OnboardingCard />
-      <Button title="Get Started" onPress={handlePress}/>
-      {/* <Button title="Get Started" onPress={router.replace('/profile')}/> */}
+      {/* <Button title="Get Started" onPress={handlePress}/> */}
+      <Button title="Get Started" onPress={router.replace('/(profile-setup)')}/>
 
 
 

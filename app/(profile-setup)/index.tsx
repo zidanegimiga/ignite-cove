@@ -1,115 +1,120 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Dimensions, TouchableOpacity, Text, ScrollView } from 'react-native';
-import { Colors } from '@/constants/Colors';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import Button from '@/components/shared/Button';
-import NameForm from './steps/nameForm';
-import InputField from '@/components/ui/InputField';
+import React, { useState, useEffect } from "react";
+import {
+  StyleSheet,
+  View,
+  Dimensions,
+  TouchableOpacity,
+  Text,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
+import { Colors } from "@/constants/Colors";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Button from "@/components/shared/Button";
+import InputField from "@/components/ui/InputField";
+import StepIndicator from "@/components/shared/StepsIndicator";
+import StepsHeader from "@/components/features/Profile-setup/StepsHeader";
+import PrivacySelection from "@/components/features/Profile-setup/PrivacySelection";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const STEP_COUNT = 10; 
-
+const STEP_COUNT = 10;
 
 const Step1 = () => (
   <View>
-     
     <Text style={styles.stepTitle}>What is your name?</Text>
     <InputField label="First Name" placeholder="Enter first name" />
     <InputField label="Second Name" placeholder="Enter second name" />
   </View>
 );
 
-const Step2 = () => (
-  <View>
-    <Text>Step 2: Set Hobbies</Text>
-
-  </View>
-);
-
-const Step3 = () => (
-  <View>
-    <Text>Step 3: Set Location</Text>
-
-  </View>
-);
-
-
-
-
-const stepComponents = [
-  { component: Step1, title: '' },
-  { component: Step2, title: 'Set Hobbies' },
-  { component: Step3, title: 'Set Location' },
- 
-];
-
-const ProfileSetup = () => {
+const ProfileSetup: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [isStepComplete, setIsStepComplete] = useState(false);
 
-  const handleNext = () => {
-    if (currentStep < STEP_COUNT - 1) {
-      setCurrentStep(currentStep + 1);
+  useEffect(() => {
+    loadProgress();
+  }, []);
+
+  const loadProgress = async () => {
+    try {
+      const storedStep = await AsyncStorage.getItem("profile_step");
+      if (storedStep) {
+        setCurrentStep(parseInt(storedStep, 10));
+      }
+    } catch (error) {
+      console.error("Error loading progress", error);
     }
   };
 
-  const handlePrevious = () => {
+
+  const handleNext = async () => {
+    const nextStep = currentStep + 1;
+    if (nextStep < STEP_COUNT) {
+      setCurrentStep(nextStep);
+      await AsyncStorage.setItem("profile_step", nextStep.toString());
+    }
+  };
+
+
+  const handlePrevious = async () => {
     if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
+      const prevStep = currentStep - 1;
+      setCurrentStep(prevStep);
+      await AsyncStorage.setItem("profile_step", prevStep.toString());
     }
   };
 
-
-  const StepIndicator = () => {
-    return (
-      <View style={styles.stepContainer}>
-        {[...Array(STEP_COUNT)].map((_, index) => (
-          <View
-            key={index}
-            style={[
-              styles.stepIndicator,
-              index <= currentStep && styles.completedStep,
-              index === currentStep && styles.activeStep,
-            ]}
-          />
-        ))}
-      </View>
-    );
+  const renderStep = () => {
+    switch (currentStep) {
+      case 0:
+        return <PrivacySelection onSelectionChange={() => {}} onCompletionChange={setIsStepComplete} />;
+      case 1:
+        return <Text>Step 2: Set Hobbies</Text>;
+      case 2:
+        return <Text>Step 3: Set Location</Text>;
+      default:
+        return <View />;
+    }
   };
 
-
-  const CurrentStepComponent = stepComponents[currentStep]?.component || (() => <Text>Step {currentStep + 1}</Text>);
-  const currentStepTitle = stepComponents[currentStep]?.title || `Step ${currentStep + 1}`;
+  // const currentStepTitle =
+  //   stepComponents[currentStep]?.title || `Step ${currentStep + 1}`;
 
   return (
-    <View style={styles.container}>
-      {/* Previous Button (Small Back Icon) */}
-      {currentStep > 0 && (
-        <TouchableOpacity style={styles.previousButton} onPress={handlePrevious}>
-          <AntDesign name="left" size={24} color="black" />
-        </TouchableOpacity>
-      )}
-
-      {/* Fixed Step Indicator at the Top */}
-      <View style={styles.stepIndicatorContainer}>
-        <StepIndicator />
-      </View>
-
-      {/* Scrollable Content for Each Step */}
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.stepContent}>
-          <Text style={styles.stepTitle}>{currentStepTitle}</Text>
-          {/* Render the current step component */}
-          <CurrentStepComponent />
-        </View>
-      </ScrollView>
-
-      {/* Next Button (Big Centered Button) */}
-      <TouchableOpacity style={styles.nextButton}>
-        <Button
-          onPress={handleNext}
-          title={currentStep === STEP_COUNT - 1 ? 'Complete' : 'Next'}
+    <KeyboardAvoidingView
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+    style={styles.container}
+  >
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.inner}>
+        <StepsHeader
+          currentStep={currentStep}
+          stepCount={STEP_COUNT}
+          onPrevious={handlePrevious}
         />
-      </TouchableOpacity>
-    </View>
+
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <View style={styles.stepContent}>
+            { renderStep() }
+          </View>
+        </ScrollView>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.nextButton}>
+            <Button
+              onPress={handleNext}
+              title={currentStep === STEP_COUNT - 1 ? "Complete" : "Next"}
+              disabled={!isStepComplete}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </TouchableWithoutFeedback>
+  </KeyboardAvoidingView>
   );
 };
 
@@ -119,61 +124,32 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     backgroundColor: Colors.light.background,
   },
-  // Previous Button (Small Back Icon)
-  previousButton: {
-    position: 'absolute',
-    top: 20,
-    left: 10,
-    zIndex: 2, // Ensure it's above the step indicator
-    padding: 10,
-    borderRadius: 20,
-  },
-  // Step Indicator
-  stepIndicatorContainer: {
-    position: 'absolute',
-    top: 70, // Adjusted to make space for the previous button
-    left: 20,
-    right: 20,
-    zIndex: 1, // Ensure it stays above the content
-  },
-  stepContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  stepIndicator: {
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#bdc3c7', // Inactive step color
+  inner: {
     flex: 1,
-    marginHorizontal: 2, // Small gap between steps
+    justifyContent: "space-between",
   },
-  completedStep: {
-    backgroundColor: Colors.light.primaryColor, // Completed step color
-  },
-  activeStep: {
-    backgroundColor: Colors.light.inactiveButton, // Active step color
-  },
-  // Scrollable Content
+
   scrollContent: {
     flexGrow: 1,
-    paddingTop: 100, // Adjusted to make space for the step indicator and previous button
   },
   stepContent: {
-    alignItems: 'center',
-    paddingHorizontal: 20,
+    alignItems: "center",
     paddingTop: 20,
   },
   stepTitle: {
     fontSize: 20,
     marginBottom: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
-  // Next Button (Big Centered Button)
+  buttonContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 15,
+    backgroundColor: "white",
+  },
   nextButton: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    right: 20,
     padding: 15,
   },
 });
