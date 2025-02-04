@@ -5,6 +5,7 @@ import Header from "@/components/features/Home/Header";
 import ProfileCard from "@/components/features/Home/ProfileCard";
 import ProfileInfo from "@/components/features/Home/ProfileInfo";
 
+
 export default function HomeScreen() {
   return (
     <SafeAreaThemedView style={styles.container}>
