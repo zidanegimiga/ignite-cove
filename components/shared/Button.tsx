@@ -7,6 +7,7 @@ import {
   StyleProp,
   ViewStyle,
   TextStyle,
+  ActivityIndicator,
 } from "react-native";
 import { useFonts } from "expo-font";
 
@@ -18,6 +19,8 @@ interface ButtonProps {
   textColor?: string;
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
+  loading?: boolean;
+  spinnerColor?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -28,31 +31,38 @@ const Button: React.FC<ButtonProps> = ({
   textColor = "#fff",
   style,
   textStyle,
+  loading = false,
+  spinnerColor = "#fff",
 }) => {
   const [loaded, error] = useFonts({
     "Oswald-Regular": require("../../assets/fonts/oswald/Oswald-Regular.ttf"),
   });
+
   return (
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.8}
-      disabled={disabled}
+      disabled={disabled || loading}
       style={[
         styles.button,
-        { backgroundColor: disabled ? "#C9C6C5" : backgroundColor },
+        { backgroundColor: disabled || loading ? "#C9C6C5" : backgroundColor },
         style,
       ]}
     >
-      <Text
-        style={[
-          { fontFamily: "Oswald-Regular" },
-          styles.text,
-          { color: textColor },
-          textStyle,
-        ]}
-      >
-        {title}
-      </Text>
+      {loading ? (
+        <ActivityIndicator size="small" color={spinnerColor} />
+      ) : (
+        <Text
+          style={[
+            { fontFamily: "Oswald-Regular" },
+            styles.text,
+            { color: textColor },
+            textStyle,
+          ]}
+        >
+          {title}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 };
@@ -66,7 +76,7 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     alignItems: "center",
     justifyContent: "center",
-    width: "100%"
+    width: "100%",
   },
   text: {
     fontSize: 16,
