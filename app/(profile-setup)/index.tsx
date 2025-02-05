@@ -19,6 +19,7 @@ import StepIndicator from "@/components/shared/StepsIndicator";
 import StepsHeader from "@/components/features/Profile-setup/StepsHeader";
 import PrivacySelection from "@/components/features/Profile-setup/PrivacySelection";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 
 const STEP_COUNT = 10;
 
@@ -33,6 +34,8 @@ const Step1 = () => (
 const ProfileSetup: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isStepComplete, setIsStepComplete] = useState(false);
+
+  const router = useRouter()
 
   useEffect(() => {
     loadProgress();
@@ -55,6 +58,8 @@ const ProfileSetup: React.FC = () => {
     if (nextStep < STEP_COUNT) {
       setCurrentStep(nextStep);
       await AsyncStorage.setItem("profile_step", nextStep.toString());
+    } else {
+      router.push("/profile")
     }
   };
 

@@ -1,7 +1,6 @@
 // @ts-nocheck
 import React, { useEffect} from "react";
 import { SafeAreaView, View, Image, Text, StyleSheet } from "react-native";
-import { useFonts } from "expo-font";
 import OnboardingCard from "@/components/features/Onboarding/Card";
 import Button from "@/components/shared/Button";
 import { useNavigation, useRouter } from "expo-router";
