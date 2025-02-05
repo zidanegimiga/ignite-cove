@@ -31,11 +31,7 @@
           "image": "./assets/images/splash.png",
           "imageWidth": 240,
           "resizeMode": "contain",
-          "backgroundColor": "#fff",
-          // "dark": {
-          //   "image": "./assets/images/splash.png",
-          //   "backgroundColor": "#fff"
-          // }
+          "backgroundColor": "#fff"
         }
       ],
       [
@@ -57,7 +53,8 @@
         {
           "photosPermission": "The app accesses your photos to let you share them."
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
