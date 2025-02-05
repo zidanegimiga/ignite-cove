@@ -10,7 +10,7 @@ const OnboardingHome = () => {
   const router = useRouter()
 
   function handlePress() {
-    navigation.navigate('payment')
+    router.replace('/payment')
   }
 
   useEffect(() => {

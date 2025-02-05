@@ -5,8 +5,10 @@ import React, { useEffect } from "react";
 import { useFonts } from "expo-font";
 import { blurhash } from "@/constants";
 import { useNavigation, useRouter } from "expo-router";
+import { getUserProgress } from "@/utils/progressStorage";
 
 const CustomSplash = () => {
+  const [progress, setProgress] = useState<string | null>(null);
   const [loaded, error] = useFonts({
     'Oswald-Regular': require('../assets/fonts/oswald/Oswald-Regular.ttf'),
     'Oswald-Bold': require('../assets/fonts/oswald/Oswald-Bold.ttf'),
@@ -15,12 +17,24 @@ const CustomSplash = () => {
   const router = useRouter()
 
   useEffect(() => {
-    if (loaded) {
-      console.log("Fonts have loaded, navigating to onboarding...");
-      setTimeout(() => {
-        router.replace("(onboarding)");
-      }, 100);
-    }
+    const checkProgress = async () => {
+      const storedProgress = await getUserProgress();
+      setProgress(storedProgress);
+
+      console.log("User Progress:", storedProgress);
+
+      if (storedProgress === "payment_completed") {
+        router.replace("(screen-home)");
+      } else if (storedProgress === "otp_verified") {
+        router.replace("(profile-setup)");
+      } else if (storedProgress === "onboarding_completed") {
+        router.replace("(onboarding)")
+      } else if (loaded) {
+        router.replace("(onboarding)"); 
+      }
+    };
+
+    checkProgress();
   }, [loaded]);
 
   useEffect(() => {

@@ -64,6 +64,7 @@ const PaymentScreen = () => {
         {
           onSuccess: async (data) => {
             console.log("OTP Verified Successfully:", data);
+            await saveUserProgress("otp_verified");
 
             ToastAndroid.show("OTP was verified successfully", ToastAndroid.SHORT);
             await saveToken(data.accessToken);
