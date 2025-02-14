@@ -9,14 +9,42 @@ import Location from "@/components/shared/Icons/Location";
 import ExpandableCard from "@/components/features/Profile/ExpandableCard";
 import PhotoAlbumCard from "@/components/features/Profile/PhotAlbum";
 import VerificationBanner from "@/components/features/Profile/VerificationBanner";
+import { useState, useEffect } from "react";
+import { loadProfileData } from "@/utilities/profileDataStorage";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export default function Profile() {
   const [loaded, error] = useFonts({
-    "Oswald-Bold": require("@/assets/fonts/oswald/Oswald-Bold.ttf"),
-    "Oswald-Regular": require("@/assets/fonts/oswald/Oswald-Regular.ttf"),
+    'Oswald-Bold': require('@/assets/fonts/oswald/Oswald-Bold.ttf'),
+    'Oswald-Regular': require('@/assets/fonts/oswald/Oswald-Regular.ttf'),
+    'Oswald-SemiBold': require('@/assets/fonts/oswald/Oswald-SemiBold.ttf'),
+    'Oswald-Light': require('@/assets/fonts/oswald/Oswald-Light.ttf'),
   });
+
+  const [userProfile, setUserProfile] = useState();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [image, setImage] = useState(null);
+  const [percentage, setPercentage] = useState("");
+
+  useEffect(() => {
+    loadProfilePhoto();
+    const storedProfile = loadProfileData();
+    console.log("Stored: ", storedProfile);
+  }, []);
+
+  const loadProfilePhoto = async () => {
+    try {
+      const storedProfile = await loadProfileData();
+      setUserProfile(storedProfile);
+
+      if (storedProfile?.profile_photo) {
+        setImage(storedProfile.profile_photo);
+      }
+    } catch (e) {
+      console.error("Error loading profile photo:", e);
+    }
+  };
 
   const profileSections = [
     { id: "1", component: <AnalyticsCard views={156} likes={156} /> },
@@ -123,7 +151,7 @@ export default function Profile() {
       >
         <ThemedText style={{fontFamily: 'Oswald-Regular', marginLeft: 16, marginVertical: 16}}>Profile</ThemedText>
         <View style={{padding: 16}}>
-        <ProfileHeader name="Paul" age="35" image_url="" />
+        <ProfileHeader name={`${userProfile?.firstName}` + ' ' + `${userProfile?.lastName}`} age={userProfile?.age} image_url={image} />
         </View>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <FlatList
