@@ -1,4 +1,5 @@
 // @ts-nocheck
+// @zidanegimiga
 import { StyleSheet, Text, View, SafeAreaView, Pressable, ToastAndroid, } from "react-native";
 import React, { useState, useEffect } from "react";
 import { SafeAreaThemedView } from "@/components/ThemedView";
@@ -12,8 +13,10 @@ import PaymentMethodSelection from "@/components/features/Payment/PaymentMethodS
 import PaymentLoader from "@/components/features/Payment/PaymentLoader";
 import { useNavigation } from "expo-router";
 import { useSendOTP, useVerifyOTP } from "@/api/auth";
+import { useGetPlans } from "@/api/plans";
 import * as Network from "expo-network";
 import { saveToken } from "@/utilities/storage";
+import { saveUserProgress } from "@/utilities/progressStorage";
 
 
 const PaymentScreen = () => {
@@ -27,8 +30,9 @@ const PaymentScreen = () => {
   });
   const [otp, setOTP] = useState("");
 
-  const { mutate, isLoading, error, data } = useSendOTP();
-  const { mutate: verifyOTP, isLoading: verifyingOTP } = useVerifyOTP();
+  const { mutate: fetchOTP, isLoading, error: fetchOTPError, data: fetchOTPData } = useSendOTP();
+  const { mutate: verifyOTP, isLoading: verifyingOTP, data: verifyOTPData } = useVerifyOTP();
+  const { data: plans, isLoading: gettingPlans, error: getPlansError } = useGetPlans();
   // const networkState = await Network.getNetworkStateAsync();
 
   const [isOtpSent, setIsOtpSent] = useState(false);
@@ -48,38 +52,67 @@ const PaymentScreen = () => {
     "payment_processing",
   ];
 
+  // const possible_steps = [
+  //   "plan_selection",
+  //   "payment_method_selection",
+  //   "payment_processing",
+  // ];
+
   const startCountdown = () => {
     setIsCounting(true);
     setSeconds(59);
   };
 
+  // const handleCodeComplete = (code: string) => {
+  //   setOTP(code);
+  
+  //   console.log("Entered Code: ", code);
+  //   if (code.length === 4) {
+  //     verifyOTP(
+  //       { otp: code, phone: phoneNumber, countryCode: cleanPhoneCode(country.dial_code) },
+  //       {
+  //         onSuccess: async (data) => {
+  //           console.log("OTP Verified Successfully:", data);
+  //           ToastAndroid.show("OTP was verified successfully", ToastAndroid.LONG);
+  //           handleForward();
+  //           await saveUserProgress("otp_verified");
+  //           await saveToken(data.accessToken);
+  //         },
+  //         onError: (error) => {
+  //           console.error("OTP Verification Failed:", error);
+  //           ToastAndroid.show("OTP was not verified. Please try again", ToastAndroid.SHORT);
+  //         },
+  //       }
+  //     );
+  //   }
+  // };
+
   const handleCodeComplete = (code: string) => {
     setOTP(code);
-    console.log("Entered Code: ", code);
+  
     if (code.length === 4) {
-
-      // TODO: OTP Verifies successfully despite entering the wrong digits
       verifyOTP(
-        { code, phone: phoneNumber, countryCode: cleanPhoneCode(country.dial_code) },
+        { otp: code, phone: phoneNumber, countryCode: cleanPhoneCode(country.dial_code) },
         {
           onSuccess: async (data) => {
-            console.log("OTP Verified Successfully:", data);
+            console.log("✅ OTP Verified Successfully:", data);
             await saveUserProgress("otp_verified");
-
-            ToastAndroid.show("OTP was verified successfully", ToastAndroid.SHORT);
             await saveToken(data.accessToken);
-
-            handleForward();
+  
+            ToastAndroid.show("OTP was verified successfully", ToastAndroid.LONG);
+  
+            // Send user to profile setup instead of next step
+            navigation.replace("(profile-setup)");
           },
           onError: (error) => {
-            console.error("OTP Verification Failed:", error);
-
-            ToastAndroid.show("OTP was not verified", ToastAndroid.SHORT);
+            console.error("❌ OTP Verification Failed:", error);
+            ToastAndroid.show("OTP was not verified. Please try again", ToastAndroid.SHORT);
           },
         }
       );
     }
   };
+  
 
   function getCurrentStepText({
     paymentStep,
@@ -168,39 +201,64 @@ const PaymentScreen = () => {
   }
   
 
-  function cleanPhoneCode(code){
-    // remove the plus sign
-    const cleanCode = code.replace("+", "");
+  function cleanPhoneCode(code: string){
+    // trim & remove the plus sign
+    const cleanCode = code.trim().replace("+", "");
     return cleanCode;
   }
 
-  const handleForward = () => {
-    const currentIndex = possible_steps.indexOf(paymentStep);
+  // const handleForward = async () => {
+  //   const currentIndex = possible_steps.indexOf(paymentStep);
+  //   console.log("Handling forward: ", { currentIndex, possible_steps });
+  
+  //   if (currentIndex < possible_steps.length - 1) {
+  //     await new Promise((resolve) => setTimeout(resolve, 200));
+  //     setPaymentStep(possible_steps[currentIndex + 1]);
+  //     console.log("Now in: ", possible_steps[currentIndex + 1]);
+  //   }
+  // };
 
+  const handleForward = async () => {
+    const currentIndex = possible_steps.indexOf(paymentStep);
+    console.log("Handling forward: ", { currentIndex, possible_steps });
+  
+    if (paymentStep === "otp_verification") {
+      console.log("STEP VERIFIFFICATION: ")
+      // Redirect to profile setup after OTP verification
+      navigation.replace("/(profile-setup)"); 
+      return;
+    }
+  
     if (currentIndex < possible_steps.length - 1) {
+      await new Promise((resolve) => setTimeout(resolve, 200)); // Small delay to ensure UI updates
       setPaymentStep(possible_steps[currentIndex + 1]);
       console.log("Now in: ", possible_steps[currentIndex + 1]);
     } else {
-      // Alert.alert("You are at the last step!");
+      // After payment, take user to final screen
+      navigation.replace("(final-step)"); 
     }
   };
+  
 
   async function getOTP() {
     console.log("Number and country", { paymentStep, phoneNumber, c: cleanPhoneCode(country.dial_code) });
   
     const networkState = await Network.getNetworkStateAsync();
-    if (!networkState.isConnected) {
-      // ToastAndroid.show("No Connection", ToastAndroid.SHORT);
-      return;
+
+    console.log("Net state: ", networkState)
+    if (!networkState.isConnected || !networkState.isInternetReachable) {
+      ToastAndroid.show("No Connection", ToastAndroid.SHORT);
+      return [];
     }
   
-    mutate(
+    fetchOTP(
       { phone: phoneNumber, countryCode: cleanPhoneCode(country.dial_code) },
       {
         onSuccess: (data) => {
           ToastAndroid.show("OTP sent successfully via WhatsApp", ToastAndroid.SHORT);
           setIsOtpSent(true);
           startCountdown();
+          console.log("✅ Mutation Success:", { isLoading, verifyingOTP });
   
           if (paymentStep === "enter_number") {
             handleForward();
@@ -209,15 +267,14 @@ const PaymentScreen = () => {
           console.log("Data: ", data)
         },
         onError: (error) => {
-          ToastAndroid.show("OTP was not sent", ToastAndroid.SHORT);
+          ToastAndroid.show("OTP was not sent. Please try again", ToastAndroid.SHORT);
           console.error("Failed to send OTP:", error);
+          console.log("✅ Mutation Fail:", { isLoading, verifyingOTP, data });
   
         },
       }
     );
-  }
-  
-  
+  }  
 
   async function sendOTP() {
     setSeconds(59);
@@ -234,7 +291,7 @@ const PaymentScreen = () => {
           break;
       case "plan_selection":
         if (selectedPlan) {
-          // handleForward();
+          handleForward();
           console.log("Handle Plan")
         }
         break;
@@ -393,8 +450,13 @@ const PaymentScreen = () => {
         </>
       )}
 
-      {paymentStep === "plan_selection" && (
-        <PlanSelection handleForward={handleForward} />
+      {paymentStep === "plan_selection" && plans && plans.length > 0 && (
+        <PlanSelection
+          handleForward={handleForward}
+          planDetails={plans}
+          error={getPlansError}
+          isLoading={gettingPlans}
+        />
       )}
 
       {paymentStep === "payment_method_selection" && (
@@ -406,7 +468,11 @@ const PaymentScreen = () => {
       {paymentStep !== "plan_selection" &&
         paymentStep !== "payment_method_selection" && (
           <Button
-            title={verifyingOTP ? "Verifying..." : getCurrentStepText({ paymentStep }).buttonTitle}
+            title={
+              verifyingOTP
+                ? "Verifying..."
+                : getCurrentStepText({ paymentStep }).buttonTitle
+            }
             disabled={returnButtonActiveState() || isLoading}
             onPress={handleButtonPress}
             loading={isLoading || verifyingOTP}
