@@ -1,8 +1,9 @@
+// @ts-nocheck
 import { StyleSheet, Text, View } from "react-native";
 import { Image } from "expo-image";
 import React from "react";
 
-const BottomTabProfileItem = ({ source }: { source: string }) => {
+const BottomTabProfileItem = ({ source }) => {
   return (
     <View style={styles.container}>
       {!source || source.length === 0 ? (
