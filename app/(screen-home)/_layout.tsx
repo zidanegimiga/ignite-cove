@@ -13,6 +13,7 @@ import { useRouter, usePathname} from "expo-router";
 import { ThemedText } from "@/components/ThemedText";
 import { useFonts } from "expo-font";
 import BottomTabProfileItem from "@/components/features/Profile/BottomTabProfileItem";
+import { loadProfileData } from "@/utilities/profileDataStorage";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -24,6 +25,30 @@ export default function TabLayout() {
     'Oswald-SemiBold': require('@/assets/fonts/oswald/Oswald-SemiBold.ttf'),
     'Oswald-Light': require('@/assets/fonts/oswald/Oswald-Light.ttf'),
   });
+
+  const [userProfile, setUserProfile] = useState();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [image, setImage] = useState(null);
+  const [percentage, setPercentage] = useState("");
+
+  useEffect(() => {
+    loadProfilePhoto();
+    const storedProfile = loadProfileData();
+    console.log("Stored: ", storedProfile);
+  }, []);
+
+  const loadProfilePhoto = async () => {
+    try {
+      const storedProfile = await loadProfileData();
+      setUserProfile(storedProfile);
+
+      if (storedProfile?.profile_photo) {
+        setImage(storedProfile.profile_photo);
+      }
+    } catch (e) {
+      console.error("Error loading profile photo:", e);
+    }
+  };
   
   useEffect(()=> {
     console.log("Pathname: ", pathname)
@@ -83,7 +108,7 @@ export default function TabLayout() {
         options={{
           title: "Profile",
           tabBarIcon: ({ color }) => (
-            <BottomTabProfileItem source="https://placebeard.it/250/250"/>
+            <BottomTabProfileItem source={{uri: image}}/>
           ),
           tabBarLabelStyle: {
             fontSize: 12,
