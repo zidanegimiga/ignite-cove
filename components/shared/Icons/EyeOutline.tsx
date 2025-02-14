@@ -1,0 +1,19 @@
+import * as React from "react"
+import Svg, { SvgProps, Path } from "react-native-svg"
+const EyeOutline = (props: SvgProps) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={16}
+    height={16}
+    fill="none"
+    {...props}
+  >
+    <Path
+      fill="#EB1E25"
+      fillRule="evenodd"
+      d="M0 8s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6Zm1.81.13L1.73 8l.082-.13c.326-.51.806-1.187 1.42-1.856C4.494 4.635 6.12 3.5 8 3.5c1.878 0 3.506 1.135 4.77 2.514A13.7 13.7 0 0 1 14.27 8c-.44.705-.943 1.37-1.502 1.986C11.506 11.365 9.88 12.5 8 12.5c-1.878 0-3.506-1.135-4.77-2.514A13.7 13.7 0 0 1 1.81 8.13ZM11 8a3 3 0 1 1-2.117-2.868 1.5 1.5 0 1 0 1.985 1.985A3 3 0 0 1 11 8Z"
+      clipRule="evenodd"
+    />
+  </Svg>
+)
+export default EyeOutline
