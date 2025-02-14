@@ -60,7 +60,7 @@ const ProfileAvatar = ({ photoUrl, completion }: ProfileAvatar) => {
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="#F36827"
+          stroke="#EB1E25"
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
           animatedProps={animatedProps}
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
   },
   completionText: {
-    color: "#FF5733",
+    color: "#EB1E25",
     fontFamily: "Oswald-Bold",
     fontSize: 12,
   },
@@ -106,6 +106,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 12,
     paddingVertical: 2,
+    borderColor: "white",
+    borderStyle: "solid",
+    borderWidth: 1
   },
 });
 
