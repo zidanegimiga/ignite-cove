@@ -17,7 +17,7 @@ interface ProfileHeaderProps {
 const ProfileHeader = ({ name, age, image_url }: ProfileHeaderProps) => {
   return (
     <View style={styles.container}>
-      <ProfileAvatar photoUrl="https://placebeard.it/250/250" completion={67} />
+      <ProfileAvatar photoUrl={image_url} completion={67} />
       <View style={styles.profileDescContainer}>
         <ThemedText style={styles.nameAndAge}>
           {name}, {age}
