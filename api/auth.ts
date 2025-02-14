@@ -41,6 +41,8 @@ const verifyOTP = async ({ otp, phone, countryCode }: { otp: string; phone: stri
       },
       body: JSON.stringify({ otp, phone, countryCode }),
     });
+
+    console.log("Verify OTP Response: ", response)
   
     if (!response.ok) {
       throw new Error("Invalid OTP or network issue");
