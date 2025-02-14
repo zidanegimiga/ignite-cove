@@ -10,13 +10,12 @@ interface BasicInfoItem {
   text: string;
 }
 
-
 interface EthnicityCardProps {
   data: string[];
   title: string;
 }
 
-const bioText = "Lifetime maybe"
+const bioText = "Lifetime maybe";
 
 const basicInfoData: BasicInfoItem[] = [
   { id: "1", icon: "male", text: "186cm" },
@@ -28,19 +27,19 @@ const basicInfoData: BasicInfoItem[] = [
 ];
 
 const EthnicityCard: React.FC<EthnicityCardProps> = ({ title, data }) => {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>{title}</Text>
-        <View style={styles.ethnicityContainer}>
-          {data.map((data, index) => (
-            <View key={index} style={styles.ethnicty_pill}>
-              <Text style={styles.text}>{data}</Text>
-            </View>
-          ))}
-        </View>
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>{title}</Text>
+      <View style={styles.ethnicityContainer}>
+        {data.map((data, index) => (
+          <View key={index} style={styles.ethnicty_pill}>
+            <Text style={styles.text}>{data}</Text>
+          </View>
+        ))}
       </View>
-    );
-  };
+    </View>
+  );
+};
 
 const ProfileInfo = () => {
   return (
@@ -84,7 +83,7 @@ const styles = StyleSheet.create({
   section_container: {
     flexDirection: "column",
     gap: 16,
-    marginTop: 48
+    marginTop: 48,
   },
   container: {
     backgroundColor: "#FFF",
