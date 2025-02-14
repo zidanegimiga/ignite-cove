@@ -4,9 +4,11 @@ import { View, Text, TextInput, StyleSheet } from 'react-native';
 interface InputFieldProps {
   label: string;
   placeholder: string;
+  value: string;
+  onChangeText: (text: string) => void;
 }
 
-const InputField: React.FC<InputFieldProps> = ({ label, placeholder }) => {
+const InputField: React.FC<InputFieldProps> = ({ label, placeholder,  value, onChangeText}) => {
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
@@ -14,6 +16,8 @@ const InputField: React.FC<InputFieldProps> = ({ label, placeholder }) => {
         style={styles.input}
         placeholder={placeholder}
         placeholderTextColor="#999"
+        value={value}
+        onChangeText={onChangeText}
       />
     </View>
   );
@@ -25,19 +29,22 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontFamily: 'Oswald-Regular',
     marginBottom: 8,
     color: '#333',
   },
   input: {
     borderWidth: 1,
-    maxWidth:200,
+    width: "100%",
     borderColor: '#ccc',
     borderRadius: 8,
-    padding: 12,
+    padding: 8,
     fontSize: 16,
     color: '#333',
     backgroundColor: '#fff',
+    fontFamily: "Oswald-Light",
+    lineHeight: 24,
+    height: 40
   },
 });
 
