@@ -53,7 +53,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   return (
     <View style={styles.container}>
       <Image
-        source={require("@/assets/images/profile_example.png")}
+        // source={require("@/assets/images/profile_example.png")}
+        source={{uri: imageUrl}}
         style={styles.image}
       />
 
