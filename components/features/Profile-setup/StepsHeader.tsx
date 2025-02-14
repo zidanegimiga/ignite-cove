@@ -1,5 +1,5 @@
 import React from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import StepIndicator from "@/components/shared/StepsIndicator";
 
@@ -17,7 +17,6 @@ const StepsHeader: React.FC<HeaderProps> = ({ currentStep, stepCount, onPrevious
           <AntDesign name="left" size={24} color="black" />
         </TouchableOpacity>
       )}
-
       <StepIndicator stepCount={stepCount} currentStep={currentStep} />
     </View>
   );
