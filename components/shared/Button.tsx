@@ -21,6 +21,7 @@ interface ButtonProps {
   textStyle?: StyleProp<TextStyle>;
   loading?: boolean;
   spinnerColor?: string;
+  variant?: "default" | "text-only";
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -33,6 +34,7 @@ const Button: React.FC<ButtonProps> = ({
   textStyle,
   loading = false,
   spinnerColor = "#fff",
+  variant = "default",
 }) => {
   const [loaded, error] = useFonts({
     "Oswald-Regular": require("../../assets/fonts/oswald/Oswald-Regular.ttf"),
@@ -44,9 +46,13 @@ const Button: React.FC<ButtonProps> = ({
       activeOpacity={0.8}
       disabled={disabled || loading}
       style={[
-        styles.button,
-        { backgroundColor: disabled || loading ? "#C9C6C5" : backgroundColor },
-        style,
+        variant === "text-only"
+          ? styles.textOnlyButton
+          : [
+              styles.button,
+              { backgroundColor: disabled || loading ? "#C9C6C5" : backgroundColor },
+              style,
+            ],
       ]}
     >
       {loading ? (
@@ -56,7 +62,7 @@ const Button: React.FC<ButtonProps> = ({
           style={[
             { fontFamily: "Oswald-Regular" },
             styles.text,
-            { color: textColor },
+            { color: variant === "text-only" ? "#EB1E25" : textColor },
             textStyle,
           ]}
         >
@@ -71,12 +77,17 @@ export default Button;
 
 const styles = StyleSheet.create({
   button: {
-    paddingVertical: 12,
+    paddingVertical: 6,
     paddingHorizontal: 20,
     borderRadius: 40,
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
+  },
+  textOnlyButton: {
+    paddingVertical: 6,
+    alignItems: "center",
+    justifyContent: "center",
   },
   text: {
     fontSize: 16,
