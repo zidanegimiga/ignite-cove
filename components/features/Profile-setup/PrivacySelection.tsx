@@ -3,9 +3,10 @@ import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from "react-nati
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AntDesign } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { loadProfileData, saveProfileData } from "@/utilities/profileDataStorage";
+import { ThemedText } from "@/components/ThemedText";
 
-type PrivacySelectionProps = {
-  onSelectionChange: (option: string) => void;
+type PersonalitySelectionProps = {
   onCompletionChange: (isComplete: boolean) => void;
 };
 
@@ -25,9 +26,7 @@ const options = [
   },
 ];
 
-const PrivacySelection: React.FC<PrivacySelectionProps> = ({
-  onSelectionChange, onCompletionChange
-}) => {
+const PersonalitySelection: React.FC<PersonalitySelectionProps> = ({ onCompletionChange }) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 
   useEffect(() => {
@@ -36,28 +35,29 @@ const PrivacySelection: React.FC<PrivacySelectionProps> = ({
 
   const loadSelection = async () => {
     try {
-      const storedOption = await AsyncStorage.getItem("privacy_selection");
-      if (storedOption) {
-        console.log("Selection: ", storedOption)
-        setSelectedOption(storedOption);
-        onSelectionChange(storedOption);
+      const storedProfile = await loadProfileData();
+      if (storedProfile?.personality) {
+        setSelectedOption(storedProfile.personality);
         onCompletionChange(true);
       }
-      console.log("Selection: ", storedOption)
     } catch (error) {
-      console.error("Error loading selection", error);
+      console.error("Error loading personality selection", error);
     }
   };
 
   const handleSelect = async (id: string) => {
     setSelectedOption(id);
-    onSelectionChange(id);
+
+    await saveProfileData({ personality: id });
+
     onCompletionChange(true);
-    await AsyncStorage.setItem("privacy_selection", id);
   };
+
 
   return (
     <View style={styles.container}>
+
+      <ThemedText style={{fontFamily: "Oswald-Regular", fontSize: 24, marginVertical: 16}}> I am: </ThemedText>
       {options.map((option) => (
         <TouchableOpacity
           key={option.id}
@@ -75,56 +75,54 @@ const PrivacySelection: React.FC<PrivacySelectionProps> = ({
             }}
           >
             <Image source={option.url} style={styles.emoji} />
-            <View style={ selectedOption === option.id && styles.radioCircle}>
+            <View style={selectedOption === option.id  ? styles.activeRadioCircle : styles.radioCircle }>
               {selectedOption === option.id && (
-                <View style={{width: 14, height: 14, borderRadius: 7, backgroundColor: "#EB1E25"}} />
+                <View style={{width: 14, height: 14, borderRadius: 7, backgroundColor: "#EB1E25"}}>
+                </View>
               )}
             </View>
           </View>
-          <View style={styles.textContainer}>
+          <View style={{flex: 1, width: "100%", height: 100}}>
             <Text style={styles.optionTitle}>{option.title}</Text>
             <Text style={styles.optionDescription}>{option.description}</Text>
           </View>
         </TouchableOpacity>
       ))}
-
-      {/* <TouchableOpacity
-        style={[styles.nextButton, !selectedOption && styles.disabledButton]}
-        onPress={onNext}
-        disabled={!selectedOption}
-      >
-        <Text style={styles.nextButtonText}>Next</Text>
-      </TouchableOpacity> */}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { marginVertical: 10, paddingHorizontal: 16
-   },
+  container: { 
+    marginVertical: 10, 
+    paddingHorizontal: 16
+   
+  },
   optionCard: {
     flexDirection: "column",
     gap: 16,
     // alignItems: "center",
-    backgroundColor: "#fdecec",
+    backgroundColor: "#FFF1F1",
     padding: 15,
-    borderRadius: 10,
-    marginBottom: 10,
-    borderWidth: 2,
+    borderRadius: 8,
+    marginBottom: 16,
+    borderWidth: 1,
     borderColor: "transparent",
-    width: Dimensions.get("window").width - 32
+    width: "100%",
+    height: 200
   },
-  selectedCard: { borderColor: "red" },
+  selectedCard: { borderColor: "red"},
   emoji: { width: 56, height: 56 },
   textContainer: { flex: 1 },
-  optionTitle: { fontSize: 18, color: "red", fontFamily: "Oswald-Bold" },
+  optionTitle: { fontSize: 16, color: "red", fontFamily: "Oswald-Regular" },
   optionDescription: { fontSize: 14, color: "#333", fontFamily: "Oswald-Light" },
   radioCircle: {
     width: 24,
     height: 24,
     borderRadius: 12,
-    borderWidth: 2,
-    borderColor: "#EB1E25",
+    borderWidth: 1,
+    // borderColor: "#EB1E25",
+    borderColor: "#CBD5E1",
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "white",
@@ -133,8 +131,8 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    borderWidth: 2,
-    borderColor: "#ccc",
+    borderWidth: 1,
+    borderColor: "#EB1E25",
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "white",
@@ -150,4 +148,4 @@ const styles = StyleSheet.create({
   disabledButton: { backgroundColor: "#ccc" },
 });
 
-export default PrivacySelection;
+export default PersonalitySelection;
