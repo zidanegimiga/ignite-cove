@@ -1,11 +1,11 @@
 // @ts-nocheck
 import { StyleSheet, Text, View } from "react-native";
 import { Image } from "expo-image";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useFonts } from "expo-font";
 import { blurhash } from "@/constants";
 import { useNavigation, useRouter } from "expo-router";
-import { getUserProgress } from "@/utils/progressStorage";
+import { getUserProgress } from "@/utilities/progressStorage";
 
 const CustomSplash = () => {
   const [progress, setProgress] = useState<string | null>(null);
@@ -16,32 +16,32 @@ const CustomSplash = () => {
   const navigation = useNavigation();
   const router = useRouter()
 
+  // useEffect(() => {
+  //   const checkProgress = async () => {
+  //     const storedProgress = await getUserProgress();
+  //     setProgress(storedProgress);
+
+  //     console.log("User Progress:", storedProgress);
+
+  //     if (storedProgress === "payment_completed") {
+  //       router.replace("(screen-home)");
+  //     } else if (storedProgress === "otp_verified") {
+  //       router.replace("(profile-setup)");
+  //     } else if (storedProgress === "onboarding_completed") {
+  //       router.replace("(onboarding)")
+  //     } else if (loaded) {
+  //       router.replace("(onboarding)"); 
+  //     }
+  //   };
+
+  //   checkProgress();
+  // }, [loaded]);
+
   useEffect(() => {
-    const checkProgress = async () => {
-      const storedProgress = await getUserProgress();
-      setProgress(storedProgress);
-
-      console.log("User Progress:", storedProgress);
-
-      if (storedProgress === "payment_completed") {
-        router.replace("(screen-home)");
-      } else if (storedProgress === "otp_verified") {
-        router.replace("(profile-setup)");
-      } else if (storedProgress === "onboarding_completed") {
-        router.replace("(onboarding)")
-      } else if (loaded) {
-        router.replace("(onboarding)"); 
-      }
-    };
-
-    checkProgress();
-  }, [loaded]);
-
-  useEffect(() => {
-    if (error) {
-      console.log("Error loading fonts:", error);
-    }
-  }, [error]);
+    setTimeout(()=> {
+      router.replace("/(onboarding)"); 
+    }, 3000)
+  }, []);
 
   return (
     <View style={styles.container}>
