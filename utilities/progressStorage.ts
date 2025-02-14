@@ -9,6 +9,9 @@ const PROGRESS_KEY = "userProgress";
 export const saveUserProgress = async (stage: string) => {
   try {
     await AsyncStorage.setItem(PROGRESS_KEY, stage);
+    const progress = await AsyncStorage.getItem(PROGRESS_KEY)
+
+    console.log("Progress: ", progress)
   } catch (error) {
     console.error("❌ Failed to save user progress:", error);
   }
