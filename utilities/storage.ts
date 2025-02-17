@@ -9,12 +9,12 @@ const isWeb = typeof window !== "undefined";
 export const saveToken = async (token: string) => {
   try {
     if (isWeb) {
-      await AsyncStorage.setItem("accessToken", token); // Works on Web
+      await AsyncStorage.setItem("accessToken", token);
     } else {
-      await SecureStore.setItemAsync("accessToken", token); // Works on Mobile
+      await SecureStore.setItemAsync("accessToken", token);
     }
   } catch (error) {
-    console.error("❌ Error saving token:", error);
+    console.error("Error saving token:", error);
   }
 };
 
@@ -29,7 +29,7 @@ export const getToken = async () => {
       return await SecureStore.getItemAsync("accessToken");
     }
   } catch (error) {
-    console.error("❌ Error retrieving token:", error);
+    console.error("Error retrieving token:", error);
     return null;
   }
 };
@@ -45,6 +45,6 @@ export const removeToken = async () => {
       await SecureStore.deleteItemAsync("accessToken");
     }
   } catch (error) {
-    console.error("❌ Error removing token:", error);
+    console.error("Error removing token:", error);
   }
 };

@@ -1,13 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getToken } from "@/utilities/storage";
-
-const API_BASE_URL = "https://sandbox.ignitecove.com/v1/plan";
+import { API_BASE_URL } from "@/constants";
 
 const fetchPlans = async () => {
   const token = await getToken();
   if (!token) throw new Error("Unauthorized: No access token found");
 
-  const response = await fetch(API_BASE_URL, {
+  const response = await fetch(`${API_BASE_URL}/plan`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -63,7 +62,7 @@ const createPlan = async (planData: any) => {
   const token = await getToken();
   if (!token) throw new Error("Unauthorized: No access token found");
 
-  const response = await fetch(API_BASE_URL, {
+  const response = await fetch(`${API_BASE_URL}/plan`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -93,7 +92,7 @@ const activatePlan = async (id: number) => {
   const token = await getToken();
   if (!token) throw new Error("Unauthorized: No access token found");
 
-  const response = await fetch(`${API_BASE_URL}/activate/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/plan/activate/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

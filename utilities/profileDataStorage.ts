@@ -1,7 +1,11 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserProfile } from "@/types/profile-setup-data";
+import { Steps } from "@/types/profile-setup-data";
 
 const PROFILE_STORAGE_KEY = "user_profile";
+const PROFILE_SETUP_PROGRESS_KEY = "profile_setup_progress"
+
+
 
 /**
  * Save profile data to AsyncStorage
@@ -45,6 +49,32 @@ export const saveSkippedStep = async (stepNumber: number) => {
     await AsyncStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(updatedData));
   } catch (error) {
     console.error("Error saving skipped step:", error);
+  }
+};
+
+export const saveSetupProgress = async (step: Steps) => {
+  try {
+    console.log("Saving step: ", step)
+    await AsyncStorage.setItem(PROFILE_SETUP_PROGRESS_KEY, step);
+  } catch (error) {
+    console.error("Error saving skipped step:", error);
+  }
+};
+
+export const loadProgressStep = async (): Promise<Steps | null> => {
+  try {
+    const data = await AsyncStorage.getItem(PROFILE_SETUP_PROGRESS_KEY);
+    console.log("Found: ", data)
+    if(data){
+      // @ts-ignore
+      return data
+    } else {
+      return null
+    }
+    // return data ? data : "enter_number";
+  } catch (error) {
+    console.error("Error loading profile data:", error);
+    return "dob";
   }
 };
 

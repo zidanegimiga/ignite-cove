@@ -41,7 +41,7 @@ const PlanSelection = ({
     return (
       <View style={styles.container}>
         <ThemedText style={styles.errorMessage}>
-          ❌ Failed to load plans. Please try again.
+          Failed to load plans. Please try again.
         </ThemedText>
       </View>
     );

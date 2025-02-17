@@ -22,6 +22,8 @@ export const payment_methods = [
   }
 ]
 
+export const API_BASE_URL = "https://sandbox.ignitecove.com/v1/";
+
 export const HEIGHTS_CM = [
   { label: "121 cm", value: 121 },
   { label: "131 cm", value: 131 },

@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import { API_BASE_URL } from "@/constants"
 
 const sendOTP = async ({
   phone,
@@ -34,7 +35,7 @@ export const useSendOTP = () => {
 };
 
 const verifyOTP = async ({ otp, phone, countryCode }: { otp: string; phone: string; countryCode: string }) => {
-    const response = await fetch("https://sandbox.ignitecove.com/v1/account/verifyotp", {
+    const response = await fetch(`${API_BASE_URL}/account/verifyotp`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

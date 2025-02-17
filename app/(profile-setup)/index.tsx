@@ -43,6 +43,7 @@ import SocioEconomicStep from "@/components/features/Profile-setup/SocioEconomic
 import { ThemedView } from "@/components/ThemedView";
 import LoadingScreen from "@/components/features/Profile-setup/LoadingScreen";
 import ProfileIsReady from "@/components/features/Profile-setup/ProfileIsReady";
+import { saveSetupProgress, loadProgressStep } from "@/utilities/profileDataStorage";
 
 const STEP_COUNT = 12;
 
@@ -54,6 +55,10 @@ const ProfileSetup: React.FC = () => {
 
   const router = useRouter();
   const navigation = useNavigation();
+
+  function handleLoadStep(step: number){
+    
+  }
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -67,7 +72,7 @@ const ProfileSetup: React.FC = () => {
             "user_profile",
             JSON.stringify(newProfile)
           );
-          setUserProfile(newProfile);
+          // setUserProfile(newProfile);
         }
       } catch (error) {
         console.error("Error loading profile data:", error);
@@ -75,6 +80,50 @@ const ProfileSetup: React.FC = () => {
         setLoading(false);
       }
     };
+
+    const fetchStep = async () => {
+      try {
+        const data = await loadProgressStep();
+        console.log("Step:", data);
+
+        switch(data){
+          case 'personality':
+            setCurrentStep(0);
+            break;
+          case 'name':
+            setCurrentStep(1);
+            break;
+          case 'dob':
+            setCurrentStep(2);
+            break;
+          case 'gender':
+            setCurrentStep(3);
+            break;
+          case 'orientation':
+            setCurrentStep(4);
+            break;
+          case 'location':
+            setCurrentStep(5);
+            break;
+          case 'physical_attributes':
+            setCurrentStep(6);
+            break;
+          case 'lifestyle':
+            setCurrentStep(7);
+            break;
+          case 'socio-economic':
+            setCurrentStep(8);
+            break;
+          case 'photo':
+            setCurrentStep(9);
+            break;
+        }
+      } catch (error) {
+        console.error("Error loading progress step:", error);
+      }
+    };
+  
+    fetchStep();
 
     fetchProfile();
   }, []);
@@ -88,13 +137,17 @@ const ProfileSetup: React.FC = () => {
   };
 
   const handleNext = () => {
-    setCurrentStep((prev) => prev + 1);
-    setIsStepComplete(false);
-
-    if(currentStep >= 12){
-      handleProfileSetupComplete()
+    console.log("Step: ", )
+    if(currentStep !== 10){
+      setCurrentStep((prev) => prev + 1);
+      setIsStepComplete(false);
+  
+      if(currentStep >= 12){
+        handleProfileSetupComplete()
+      }
+    } else {
+      router.replace('/(onboarding)/payment')
     }
-
   };
 
   const handleSkip = async () => {

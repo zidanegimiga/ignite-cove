@@ -11,12 +11,15 @@ import PhoneVerification from "@/components/features/Payment/PhoneVerification";
 import PlanSelection from "@/components/features/Payment/PlanSelection";
 import PaymentMethodSelection from "@/components/features/Payment/PaymentMethodSelection";
 import PaymentLoader from "@/components/features/Payment/PaymentLoader";
-import { useNavigation } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import { useSendOTP, useVerifyOTP } from "@/api/auth";
 import { useGetPlans } from "@/api/plans";
 import * as Network from "expo-network";
 import { saveToken } from "@/utilities/storage";
 import { saveUserProgress } from "@/utilities/progressStorage";
+import { loadProgressStep, saveSetupProgress } from "@/utilities/profileDataStorage";
+import { Steps } from "@/types/profile-setup-data";
+
 
 
 const PaymentScreen = () => {
@@ -41,8 +44,11 @@ const PaymentScreen = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
   const [seconds, setSeconds] = useState(5);
   const [isCounting, setIsCounting] = useState(false);
+  const [loadedStep , setLoadedStep ] = useState<Steps>("enter_number")
+  const [loading, setLoading] = useState<boolean>(false)
 
   const navigation = useNavigation();
+  const router = useRouter()
 
   const possible_steps = [
     "enter_number",
@@ -89,24 +95,32 @@ const PaymentScreen = () => {
 
   const handleCodeComplete = (code: string) => {
     setOTP(code);
-  
-    if (code.length === 4) {
+    setLoading(true)
+    if (code.length === 4) {      
       verifyOTP(
         { otp: code, phone: phoneNumber, countryCode: cleanPhoneCode(country.dial_code) },
         {
           onSuccess: async (data) => {
-            console.log("✅ OTP Verified Successfully:", data);
-            await saveUserProgress("otp_verified");
-            await saveToken(data.accessToken);
-  
-            ToastAndroid.show("OTP was verified successfully", ToastAndroid.LONG);
-  
-            // Send user to profile setup instead of next step
-            navigation.replace("(profile-setup)");
+            if(Number(code) === data?.id){
+              console.log("OTP Verified Successfully:", data);
+              await saveToken(data.accessToken);
+              await saveSetupProgress("personality")
+              const progress = await loadProgressStep();
+    
+              ToastAndroid.show("OTP was verified successfully", ToastAndroid.LONG);
+              setLoading(false)
+    
+              // TODO: Send user to profile setup instead of next step
+              navigation.replace("(profile-setup)");
+            } else {
+              setLoading(false)
+              ToastAndroid.
+              show("Incorrect OTP code, please try again", ToastAndroid.LONG);
+            }
           },
           onError: (error) => {
-            console.error("❌ OTP Verification Failed:", error);
-            ToastAndroid.show("OTP was not verified. Please try again", ToastAndroid.SHORT);
+            console.error("OTP Verification Failed:", error);
+            ToastAndroid.show("OTP was not verified due to a problem. Please try again", ToastAndroid.LONG);
           },
         }
       );
@@ -207,24 +221,10 @@ const PaymentScreen = () => {
     return cleanCode;
   }
 
-  // const handleForward = async () => {
-  //   const currentIndex = possible_steps.indexOf(paymentStep);
-  //   console.log("Handling forward: ", { currentIndex, possible_steps });
-  
-  //   if (currentIndex < possible_steps.length - 1) {
-  //     await new Promise((resolve) => setTimeout(resolve, 200));
-  //     setPaymentStep(possible_steps[currentIndex + 1]);
-  //     console.log("Now in: ", possible_steps[currentIndex + 1]);
-  //   }
-  // };
-
   const handleForward = async () => {
-    const currentIndex = possible_steps.indexOf(paymentStep);
-    console.log("Handling forward: ", { currentIndex, possible_steps });
-  
+    const currentIndex = possible_steps.indexOf(paymentStep);  
     if (paymentStep === "otp_verification") {
-      console.log("STEP VERIFIFFICATION: ")
-      // Redirect to profile setup after OTP verification
+      await saveSetupProgress("personality");
       navigation.replace("/(profile-setup)"); 
       return;
     }
@@ -232,13 +232,11 @@ const PaymentScreen = () => {
     if (currentIndex < possible_steps.length - 1) {
       await new Promise((resolve) => setTimeout(resolve, 200)); // Small delay to ensure UI updates
       setPaymentStep(possible_steps[currentIndex + 1]);
-      console.log("Now in: ", possible_steps[currentIndex + 1]);
     } else {
       // After payment, take user to final screen
-      navigation.replace("(final-step)"); 
+      // navigation.replace("(final-step)"); 
     }
-  };
-  
+  };  
 
   async function getOTP() {
     console.log("Number and country", { paymentStep, phoneNumber, c: cleanPhoneCode(country.dial_code) });
@@ -266,11 +264,11 @@ const PaymentScreen = () => {
 
           console.log("Data: ", data)
         },
+
         onError: (error) => {
           ToastAndroid.show("OTP was not sent. Please try again", ToastAndroid.SHORT);
           console.error("Failed to send OTP:", error);
           console.log("✅ Mutation Fail:", { isLoading, verifyingOTP, data });
-  
         },
       }
     );
@@ -280,17 +278,22 @@ const PaymentScreen = () => {
     setSeconds(59);
   }
 
-  function handleButtonPress() {
+  async function handleButtonPress() {
+    console.log("Current: ", paymentStep)
+    
     switch (paymentStep) {
       case "enter_number":
         getOTP();
+        await saveSetupProgress(paymentStep)
         break;
-        case "otp_verification":
+      case "otp_verification":
           // handleCodeComplete()
+          await saveSetupProgress("plan_selection");
           console.log("Handle OTP Verification")
-          break;
+        break;
       case "plan_selection":
         if (selectedPlan) {
+          await saveSetupProgress("payment_method_selection");
           handleForward();
           console.log("Handle Plan")
         }
@@ -298,7 +301,8 @@ const PaymentScreen = () => {
       case "payment_method_selection":
         if (paymentMethod) {
           handleForward();
-          navigation.navigate("(profile-setup)");
+          saveSetupProgress("payment_done")
+          // navigation.navigate("(profile-setup)");
         }
         break;
       case "payment_processing":
@@ -308,6 +312,30 @@ const PaymentScreen = () => {
         break;
     }
   }
+
+  useEffect(() => {
+    const fetchStep = async () => {
+      try {
+        const data = await loadProgressStep();
+        console.log("Step:", data);
+  
+        if (data) {
+          if (data === "personality") {
+            router.replace('/(profile-setup)');
+          } else {
+            setPaymentStep(data);
+          }
+        } else {
+          setPaymentStep("enter_number");
+        }
+      } catch (error) {
+        console.error("Error loading progress step:", error);
+        setPaymentStep("enter_number");
+      }
+    };
+  
+    fetchStep();
+  }, []);
   
 
   useEffect(() => {
@@ -473,9 +501,9 @@ const PaymentScreen = () => {
                 ? "Verifying..."
                 : getCurrentStepText({ paymentStep }).buttonTitle
             }
-            disabled={returnButtonActiveState() || isLoading}
+            disabled={returnButtonActiveState() || isLoading || loading}
             onPress={handleButtonPress}
-            loading={isLoading || verifyingOTP}
+            loading={isLoading || verifyingOTP || loading}
             spinnerColor="#fff"
           />
         )}
