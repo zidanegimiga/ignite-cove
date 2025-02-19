@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   View,
   Text,
@@ -22,13 +22,9 @@ import { ThemedText } from "@/components/ThemedText";
 
 type SocioEconomicStepProps = {
   onCompletionChange: (isComplete: boolean) => void;
-  onSkip: () => void;
 };
 
-const SocioEconomicStep: React.FC<SocioEconomicStepProps> = ({
-  onCompletionChange,
-  onSkip,
-}) => {
+const SocioEconomicStep: React.FC<SocioEconomicStepProps> = ({ onCompletionChange }) => {
   const [dropdownStates, setDropdownStates] = useState({
     languageOpen: false,
     ethnicityOpen: false,
@@ -37,25 +33,64 @@ const SocioEconomicStep: React.FC<SocioEconomicStepProps> = ({
   });
 
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>([]);
-  const [selectedEthnicity, setSelectedEthnicity] = useState<string | null>(
-    null
-  );
+  const [selectedEthnicity, setSelectedEthnicity] = useState<string | null>(null);
   const [selectedReligion, setSelectedReligion] = useState<string | null>(null);
-  const [selectedEducation, setSelectedEducation] = useState<string | null>(
-    null
-  );
-  const [occupation, setOccupation] = useState("");
-  const [industry, setIndustry] = useState("");
-
+  const [selectedEducation, setSelectedEducation] = useState<string | null>(null);
+  const [occupation, setOccupation] = useState<string>("");
+  const [industry, setIndustry] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
+  // **Load Stored Data When Component Mounts**
   useEffect(() => {
+    const loadStoredData = async () => {
+      try {
+        const storedProfile = await loadProfileData();
+        if (storedProfile?.socioEconomic) {
+          const { languages, ethnicity, religion, educationLevel, occupation, industry } =
+            storedProfile.socioEconomic;
+
+          setSelectedLanguages(languages || []);
+          setSelectedEthnicity(ethnicity);
+          setSelectedReligion(religion);
+          setSelectedEducation(educationLevel);
+          setOccupation(occupation || "");
+          setIndustry(industry || "");
+        }
+      } catch (error) {
+        console.error("Error loading socio-economic data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     loadStoredData();
   }, []);
 
+  // **Save Data to Storage Whenever Any Field Updates**
   useEffect(() => {
     const isComplete = checkCompletion();
     onCompletionChange(isComplete);
+
+    const saveData = async () => {
+      try {
+        await saveProfileData({
+          socioEconomic: {
+            languages: selectedLanguages,
+            ethnicity: selectedEthnicity,
+            religion: selectedReligion,
+            educationLevel: selectedEducation,
+            occupation,
+            industry,
+          },
+        });
+
+        console.log("Socio-economic data saved");
+      } catch (error) {
+        console.error("Error saving socio-economic data:", error);
+      }
+    };
+
+    saveData();
   }, [
     selectedLanguages,
     selectedEthnicity,
@@ -65,7 +100,8 @@ const SocioEconomicStep: React.FC<SocioEconomicStepProps> = ({
     industry,
   ]);
 
-  const checkCompletion = () => {
+  // **Check if All Required Fields are Filled**
+  const checkCompletion = useCallback(() => {
     return !!(
       selectedLanguages.length > 0 ||
       selectedEthnicity ||
@@ -74,37 +110,15 @@ const SocioEconomicStep: React.FC<SocioEconomicStepProps> = ({
       occupation ||
       industry
     );
-  };
+  }, [selectedLanguages, selectedEthnicity, selectedReligion, selectedEducation, occupation, industry]);
 
-  const loadStoredData = async () => {
-    const storedProfile = await loadProfileData();
-    if (storedProfile?.socioEconomic) {
-      const {
-        languages,
-        ethnicity,
-        religion,
-        educationLevel,
-        occupation,
-        industry,
-      } = storedProfile.socioEconomic;
-      setSelectedLanguages(languages || []);
-      setSelectedEthnicity(ethnicity);
-      setSelectedReligion(religion);
-      setSelectedEducation(educationLevel);
-      setOccupation(occupation);
-      setIndustry(industry);
-    }
-    setLoading(false);
-  };
-
+  // **Remove a Selected Language**
   const handleRemoveLanguage = (language: string) => {
     setSelectedLanguages((prev) => prev.filter((item) => item !== language));
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-    >
+    <KeyboardAvoidingView style={styles.container}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.inner}>
           <FlatList
@@ -112,29 +126,16 @@ const SocioEconomicStep: React.FC<SocioEconomicStepProps> = ({
             keyExtractor={(item) => item.toString()}
             renderItem={() => (
               <View style={styles.scrollContent}>
-                <ThemedText
-                  style={{
-                    fontFamily: "Oswald-Regular",
-                    fontSize: 24,
-                    marginVertical: 16,
-                    lineHeight: 26,
-                  }}
-                >
-                  What is your cultural, social and educational background?
+                <ThemedText style={{ fontFamily: "Oswald-Regular", fontSize: 24, marginVertical: 16 }}>
+                  What is your cultural, social, and educational background?
                 </ThemedText>
 
+                {/* Language Selection */}
                 <Text style={styles.label}>Languages</Text>
                 <DropDownPicker
                   listMode="FLATLIST"
-                  zIndex={3000}
-                  zIndexInverse={1000}
                   open={dropdownStates.languageOpen}
-                  setOpen={() =>
-                    setDropdownStates({
-                      ...dropdownStates,
-                      languageOpen: !dropdownStates.languageOpen,
-                    })
-                  }
+                  setOpen={() => setDropdownStates({ ...dropdownStates, languageOpen: !dropdownStates.languageOpen })}
                   multiple={true}
                   value={selectedLanguages}
                   items={[
@@ -142,24 +143,17 @@ const SocioEconomicStep: React.FC<SocioEconomicStepProps> = ({
                     { label: "French", value: "french" },
                     { label: "Spanish", value: "spanish" },
                   ]}
-                  labelStyle={{
-                    fontFamily: "Oswald-Light",
-                  }}
                   setValue={setSelectedLanguages}
                   placeholder="Select languages"
-                  style={{ ...styles.dropdown }}
+                  style={styles.dropdown}
                 />
 
                 <View style={styles.selectedItemsContainer}>
                   {selectedLanguages.map((language) => (
                     <View key={language} style={styles.selectedItem}>
                       <Text style={styles.selectedItemText}>{language}</Text>
-                      <TouchableOpacity
-                        onPress={() => handleRemoveLanguage(language)}
-                      >
-                        <View style={styles.removeButtonContainer}>
-                          <Ionicons name="close" size={8} color="red" />
-                        </View>
+                      <TouchableOpacity onPress={() => handleRemoveLanguage(language)}>
+                        <Ionicons name="close" size={14} color="red" />
                       </TouchableOpacity>
                     </View>
                   ))}
@@ -169,26 +163,19 @@ const SocioEconomicStep: React.FC<SocioEconomicStepProps> = ({
                 <Text style={styles.label}>Ethnicity</Text>
                 <DropDownPicker
                   open={dropdownStates.ethnicityOpen}
-                  zIndex={2000}
-                  listMode="FLATLIST"
-                  zIndexInverse={1000}
-                  setOpen={() =>
-                    setDropdownStates({
-                      ...dropdownStates,
-                      ethnicityOpen: !dropdownStates.ethnicityOpen,
-                    })
-                  }
+                  setOpen={() => setDropdownStates({ ...dropdownStates, ethnicityOpen: !dropdownStates.ethnicityOpen })}
                   value={selectedEthnicity}
                   items={[
                     { label: "African", value: "african" },
                     { label: "Asian", value: "asian" },
                     { label: "Hispanic", value: "hispanic" },
                   ]}
-                  setValue={(val) => setSelectedEthnicity(val)}
+                  setValue={setSelectedEthnicity}
                   placeholder="Select your ethnicity"
                   style={styles.dropdown}
                 />
 
+                {/* Occupation Input */}
                 <Text style={styles.label}>Occupation</Text>
                 <TextInput
                   style={styles.input}
@@ -197,10 +184,11 @@ const SocioEconomicStep: React.FC<SocioEconomicStepProps> = ({
                   onChangeText={setOccupation}
                 />
 
+                {/* Industry Input */}
                 <Text style={styles.label}>Industry</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="e.g technology, health"
+                  placeholder="e.g., technology, health"
                   value={industry}
                   onChangeText={setIndustry}
                 />
@@ -208,50 +196,32 @@ const SocioEconomicStep: React.FC<SocioEconomicStepProps> = ({
                 {/* Religion Dropdown */}
                 <Text style={styles.label}>Religion</Text>
                 <DropDownPicker
-                  listMode="FLATLIST"
                   open={dropdownStates.religionOpen}
-                  zIndex={2500}
-                  zIndexInverse={1000}
-                  setOpen={() =>
-                    setDropdownStates({
-                      ...dropdownStates,
-                      religionOpen: !dropdownStates.religionOpen,
-                    })
-                  }
+                  setOpen={() => setDropdownStates({ ...dropdownStates, religionOpen: !dropdownStates.religionOpen })}
                   value={selectedReligion}
                   items={[
                     { label: "Christianity", value: "christianity" },
                     { label: "Islam", value: "islam" },
                     { label: "Hinduism", value: "hinduism" },
                   ]}
-                  setValue={(val) => setSelectedReligion(val)}
+                  setValue={setSelectedReligion}
                   placeholder="Select your religion"
                   style={styles.dropdown}
                 />
 
+                {/* Education Level Dropdown */}
                 <Text style={styles.label}>Education Level</Text>
                 <DropDownPicker
-                  listMode="FLATLIST"
-                  zIndex={3000}
-                  zIndexInverse={1000}
-                  labelStyle={{
-                    fontFamily: "Oswald-Light",
-                  }}
                   open={dropdownStates.educationOpen}
-                  setOpen={() =>
-                    setDropdownStates({
-                      ...dropdownStates,
-                      educationOpen: !dropdownStates.educationOpen,
-                    })
-                  }
+                  setOpen={() => setDropdownStates({ ...dropdownStates, educationOpen: !dropdownStates.educationOpen })}
                   value={selectedEducation}
                   items={[
                     { label: "High School", value: "high_school" },
                     { label: "Bachelor's", value: "bachelor" },
                     { label: "Master's", value: "master" },
                   ]}
-                  setValue={(val) => setSelectedEducation(val)}
-                  placeholder="Select highest education level attained"
+                  setValue={setSelectedEducation}
+                  placeholder="Select education level"
                   style={styles.dropdown}
                 />
               </View>
