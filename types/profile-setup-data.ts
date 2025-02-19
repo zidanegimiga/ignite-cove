@@ -2,12 +2,16 @@ export interface UserProfile {
     personality?: string;
     firstName?: string;
     lastName?: string;
+    phoneNumber: string;
+    countryCode: string;
     DOB?: string;
     age?: number;
     gender?: string;
     sexualOrientation?: string[];
-    location?: { longitude: number; latitude: number };
-    stringLocation?: string | null | undefined;
+    longitude: number;
+    latitude: number;
+    role: string;
+    location?: string | null | undefined;
     physicalAttributes?: {
       height: string | number | null;
       metric: string;
@@ -33,6 +37,9 @@ export interface UserProfile {
     photos?: string[];
     skippedSteps?: number[];
     profile_photo: string | null;
+    imageURL: string | null;
+    selectedPlan: any
+
 }
 
 export type Steps = "enter_number" | "otp_verification" | "personality" | "name" |"dob" |"gender" | "orientation" |"location" | "physical_attributes" | "socio-economic" | "photo" | "plan_selection" | "payment_method_selection" | "payment_done" | "phone_verified" | "lifestyle";
