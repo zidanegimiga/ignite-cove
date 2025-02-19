@@ -30,7 +30,6 @@ export default function Profile() {
   useEffect(() => {
     loadProfilePhoto();
     const storedProfile = loadProfileData();
-    console.log("Stored: ", storedProfile);
   }, []);
 
   const loadProfilePhoto = async () => {
@@ -38,8 +37,8 @@ export default function Profile() {
       const storedProfile = await loadProfileData();
       setUserProfile(storedProfile);
 
-      if (storedProfile?.profile_photo) {
-        setImage(storedProfile.profile_photo);
+      if (storedProfile?.imageURL) {
+        setImage(storedProfile.imageURL);
       }
     } catch (e) {
       console.error("Error loading profile photo:", e);
@@ -57,7 +56,7 @@ export default function Profile() {
           type="personality"
           icon={
             <Image
-              source={require("@/assets/images/adventorous.png")}
+              source={image}
               style={{ width: 24, height: 24 }}
             />
           }
@@ -134,9 +133,7 @@ export default function Profile() {
         <PhotoAlbumCard
           title="Photo Album"
           initialPhotos={[
-            "https://placebeard.it/250/250",
-            "https://placebeard.it/250/250",
-            "https://placebeard.it/250/250"
+            image
           ]}
         />
       )
