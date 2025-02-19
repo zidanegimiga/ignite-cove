@@ -1,43 +1,44 @@
-//@ts-ignore
 // @ts-nocheck
-
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { StyleSheet, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import CountryCodeDropdownPicker from "../features/Payment/phone-countrycode-picker";
 
 type CountryCodePickerProps = {
   onCountryChange: (country: CountryPayload) => void;
   onPhoneChange: (phone: string) => void;
   labels: {
-    code?: string,
-    phone?: string,
-    placeholder?: string
-  }
+    code?: string;
+    phone?: string;
+    placeholder?: string;
+  };
+  onCompletionChange: (isComplete: boolean) => void;
 };
 
-type CountryPayload = {name: string, dial_code: string, code: string, flag: string}
+type CountryPayload = {
+  name: string;
+  dial_code: string;
+  code: string;
+  flag: string;
+};
 
 const CountryCodePicker: React.FC<CountryCodePickerProps> = ({
   onCountryChange,
   onPhoneChange,
-  labels
+  labels,
+  onCompletionChange,
 }) => {
-  const [selected, setSelected] = React.useState("");
-  const [country, setCountry] = React.useState("");
-  const [phone, setPhone] = React.useState("");
+  const [selected, setSelected] = useState<string | undefined>(undefined); // ✅ Fix type
+  const [country, setCountry] = useState<CountryPayload | null>(null);
+  const [phone, setPhone] = useState<string>("");
 
-  React.useEffect(() => {
-    onCountryChange(country);
-  }, [country, onCountryChange]);
-
-  React.useEffect(() => {
-    onPhoneChange(phone);
-  }, [phone, onPhoneChange]);
+  useEffect(() => {
+    onCompletionChange(!!(country && phone.trim() !== ""));
+  }, [country, phone, onCompletionChange]);
 
   return (
     <CountryCodeDropdownPicker
       selected={selected}
-      setSelected={setSelected}
+      setSelected={setSelected} 
       setCountryDetails={(value: CountryPayload) => {
         setCountry(value);
         onCountryChange(value);
