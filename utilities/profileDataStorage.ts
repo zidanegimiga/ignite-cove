@@ -12,6 +12,7 @@ const PROFILE_SETUP_PROGRESS_KEY = "profile_setup_progress"
  */
 export const saveProfileData = async (data: Partial<UserProfile>) => {
   try {
+    console.log("Saving data: ", data)
     const existingData = await AsyncStorage.getItem(PROFILE_STORAGE_KEY);
     const parsedData = existingData ? JSON.parse(existingData) : {};
     const updatedData = { ...parsedData, ...data };

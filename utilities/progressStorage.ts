@@ -11,9 +11,9 @@ export const saveUserProgress = async (stage: string) => {
     await AsyncStorage.setItem(PROGRESS_KEY, stage);
     const progress = await AsyncStorage.getItem(PROGRESS_KEY)
 
-    console.log("Progress: ", progress)
+    console.log("Saving Progress: ", progress)
   } catch (error) {
-    console.error("❌ Failed to save user progress:", error);
+    console.error("Failed to save user progress:", error);
   }
 };
 
@@ -25,7 +25,7 @@ export const getUserProgress = async (): Promise<string | null> => {
   try {
     return await AsyncStorage.getItem(PROGRESS_KEY);
   } catch (error) {
-    console.error("❌ Failed to retrieve user progress:", error);
+    console.error("Failed to retrieve user progress:", error);
     return null;
   }
 };
